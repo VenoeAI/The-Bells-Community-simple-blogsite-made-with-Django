@@ -1,0 +1,216 @@
+{% load static %}
+{% load materializecss %}
+{% load humanize %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">  
+  
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="{% static 'css/materialize.min.css' %}">
+    
+    <!-- custom css -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+
+    <!-- Font Awesome-->
+    <script src="https://kit.fontawesome.com/c2dba015b9.js" crossorigin="anonymous"></script>
+
+  <!-- htmx CDN -->
+  <script src="https://unpkg.com/htmx.org@1.8.0"
+          integrity="sha384-cZuAZ+ZbwkNRnrKi05G/fjBX+azI9DNOkNYysZ0I/X5ZFgsmMiBXgDZof30F5ofc"
+          crossorigin="anonymous"></script>
+
+    <!--mobile optimiztion -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>The Bells Community | {% block title %}{% endblock title %}</title>
+    
+</head>
+<body>
+
+<div class="navbar-fixed">
+    <nav class="purple darken-3" style="background-color: darkblue !important;">
+        <div class="container">
+            <!-- Nav Dropdown -->
+            <ul id="dropdown1" class="dropdown-content">
+                <li>
+                    <a href="{% url 'accounts:profile' %}">Profile</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="{% url 'account_logout' %}">Logout</a>
+                </li>
+            </ul>
+            <!-- end nav dropdown -->
+            <div class="nav-wrapper" >
+                <a href="/" class="brand-logo flow-text hide-on-small-only">The Bells Community</a>
+                <a href="/" class="brand-logo hide-on-med-and-up"><i class="material-icons">home</i></a>
+                <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+
+                
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <a href="/">Posts</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'posts:create' %}">Add+</a>
+                    </li>
+
+                    <!-- Dropdown Trigger -->
+                    <li><a class="dropdown-trigger btn-floating" href="#!" data-target="dropdown1">
+                        <img src="{{ user.userprofile.avatar_thumbnail.url }}" class="avatar responsive-img">
+                        </a>
+                                               
+                    </li>
+
+                    {% else %}
+                    <li>
+                        <a href="{% url 'account_login' %}">Login</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'account_signup' %}">Signup</a>
+                    </li>
+                    {% endif %}
+                   
+                </ul>
+            </div>
+
+            
+        </div>
+    </nav>
+    
+</div>
+<!-- Nav search bar -->
+<nav class="deep-purple lighten-4">
+    <div class="nav-wrapper">
+      <form action="/search">
+        <div class="input-field">
+          <input id="search" type="search" name="q" required">
+          <label class="label-icon" for="search"><i class="material-icons deep-purple-text">search</i></label>
+          <i class="material-icons">close</i>
+        </div>
+      </form>
+    </div>
+</nav>
+<!-- sidenav slideout -->
+<ul id="slide-out" class="sidenav">
+    {% if user.is_authenticated %}
+    <li>
+        <div class="user-view">
+            <div class="background">
+                <img src="{% static 'images/office.jpg' %}">
+            </div>
+            <a href="#user"><img class="circle" src="{{ user.userprofile.avatar_thumbnail.url }}"></a>
+            <a href="#name"><span class="white-text name">{{ user.username }}</span></a>
+            <a href="#email"><span class="white-text email">{{ user.email }}</span></a>
+        </div>
+    </li>
+    {% else %}
+    <li>
+        <div class="user-view">
+            <div class="background">
+                <img src="{% static 'images/office.jpg' %}">
+            </div>
+            <a href="#user"><img class="circle" src="/media/avatars/user_avatar.png"></a>
+            <a href="#name"><span class="white-text name">guest</span></a>
+            <a href="#email"><span class="white-text email"></span></a>
+        </div>
+    </li>
+    {% endif %}
+
+    <li><a class="waves-effect" href="/"><i class="material-icons">home</i>Home</a></li>
+    <li><a class="waves-effect" href="/"><i class="material-icons">list</i>Posts</a></li>
+    <li><a class="waves-effect" href="{% url 'posts:create' %}"><i class="material-icons">add</i>New Post</a></li>
+    <li>
+        <div class="divider"></div>
+    </li>
+    <li><a class="subheader">Account</a></li>
+    {% if user.is_authenticated %}
+    <li><a class="waves-effect" href="{% url 'accounts:profile' %}"><i class="material-icons">account_circle</i>Profile</a>
+    </li>
+    <li><a class="waves-effect" href="{% url 'account_logout' %}"><i class="material-icons">highlight_off</i>Logout</a>
+    </li>
+    {% else %}
+    <li><a class="waves-effect" href="{% url 'account_login' %}"><i class="material-icons">exit_to_app</i>Login</a></li>
+    <li><a class="waves-effect" href="{% url 'account_signup' %}"><i class="material-icons">launch</i>Signup</a></li>
+    {% endif %}
+</ul>
+
+<div class="container">
+    <!-- Messages list -->
+    {% if messages %}
+    <ul id="messages-queue" class="collection purple-text text-darken-4" style="display: none;">
+        {% for message in messages %}
+        <li id="dj-msg" {% if message.tags %} class="{{ message.tags }} collection-item indigo lighten-5" {% endif %}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% block content %}
+
+    {% endblock content %}
+</div>
+<div class="section"></div>
+
+{% block script %}
+
+{% endblock script %}
+  
+    <script src="{% static 'js/materialize.min.js' %}"></script>
+
+<script>
+        
+        // floatin action buttons 
+        document.addEventListener('DOMContentLoaded', function() {
+        var fab = document.querySelectorAll('.fixed-action-btn');
+        var instances = M.FloatingActionButton.init(fab, {});
+        });
+        // end floating action buttons
+
+        // dropdown menu stuffs
+        document.addEventListener('DOMContentLoaded', function() {
+        var drop = document.querySelectorAll('.dropdown-trigger');
+        var instances = M.Dropdown.init(drop, {});
+        });
+
+        // Create Post Modal
+        document.addEventListener('DOMContentLoaded', function() {
+        var pmodal = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(pmodal, {});
+        });
+
+        // Materialize side nav something
+        document.addEventListener('DOMContentLoaded', function() {
+        var snav = document.querySelectorAll('.sidenav');
+        var instances = M.Sidenav.init(snav, {});
+        });
+
+        /* date picker materialized css */
+        document.addEventListener('DOMContentLoaded', function() {
+        var dp = document.querySelectorAll('.datepicker');
+        var instances = M.Datepicker.init(dp, {
+          'isRTL': false
+        });
+        });
+
+        // Materialized CSS Collapsible from video
+        document.addEventListener('DOMContentLoaded', function() {
+        var collaps = document.querySelectorAll('.collapsible');
+        var instances = M.Collapsible.init(collaps, {});
+        });
+
+        // show messages as materialize toast
+        document.addEventListener('DOMContentLoaded', function msgToast() {
+              const msgEl = document.getElementById('dj-msg')
+              if (msgEl != null) {
+                let msg = msgEl.textContent
+                M.toast({html: msg }) 
+            }
+          })
+    
+
+</script>
+</body>
+</html>

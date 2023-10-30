@@ -1,0 +1,16 @@
+{% load hitcount_tags %}
+<h5 class="teal-text">Recent Posts</h5>
+<div class="collection">
+    {% for post in recent_posts %}
+    <li class="collection-item avatar">
+        <img src="{{ post.image_thumbnail.url }}" class="circle responsive-img">
+        <a href="{{ post.get_absolute_url }}">
+            <span class="title">{{ post.title|truncatechars:17 }}</span>
+        </a>
+        <p class="grey-text">{{ post.creator.userprofile.name }} <br>
+            {{ post.added|timesince }} ago
+        </p>
+    </li>
+    {% endfor %}
+</div>
+

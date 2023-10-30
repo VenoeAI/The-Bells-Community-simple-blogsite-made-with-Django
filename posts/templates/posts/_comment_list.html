@@ -1,0 +1,54 @@
+        <ul id="comments-ul" class="collection">
+
+          <li id="comment-form-li" class="collection-item">
+            {% if user.is_authenticated %}
+            <span>
+                <button class="btn blue wave-effects" hx-get="{% url 'posts:comment' post.slug %}"
+                hx-target="#comment-form-li"        
+                hx-swap="outerHTML">Leave a comment</button>
+            </span>
+            {% else %}
+            <p class="">Please <a href="{% url 'account_login' %}?next={{ post.get_absolute_url }}">login</a> to leave a comment.</p>
+            {% endif %}
+          </li>
+          {% for comment in post.comments %}
+            <li id="comment-{{comment.pk}}" class="collection-item avatar">
+              <a href="{{ comment.user.userprofile.get_public_profile_url }}">
+              <img src="{{ comment.user.userprofile.avatar_thumbnail.url }}" alt="" class="circle" />
+            </a>
+              <span class="title"><a href="{{ comment.user.userprofile.get_public_profile_url }}">
+                {{comment.user.userprofile.name}}</a></span>
+              <p style="margin-top: 2px;"><span class="grey-text">{{comment.added}}</span>
+                <br>
+                 {{comment.comment|linebreaks}}
+              </p>
+              
+              {% if user.is_authenticated and user == comment.user %}
+              <form hx-post="{{ comment.get_delete_url }}" method="post"
+                class="secondary-content"
+                hx-target="#comment-{{comment.pk}}"
+                hx-swap="outerHTML"> 
+                {% csrf_token %}
+                <div id="indicator" class="htmx-indicator preloader-wrapper small active">
+                  <div class="spinner-layer spinner-green-only">
+                      <div class="circle-clipper left">
+                      <div class="circle"></div>
+                      </div><div class="gap-patch">
+                      <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                      <div class="circle"></div>
+                      </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-flat waves-effect waves-red transparent grey-text">
+                  <i class="material-icons tiny grey-text">delete</i>
+                </button>
+                
+              </form>
+            {% endif %}
+
+              <!-- <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a> -->
+            </li>
+          {% endfor %}
+          </ul>
+

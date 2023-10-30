@@ -1,0 +1,33 @@
+<li id="comment-{{comment.pk}}" class="collection-item avatar grey lighten-4"
+            hx-target="this"
+            hx-swap="outerHTML">
+    <img src="{{ comment.user.userprofile.avatar_thumbnail.url }}" alt="" class="circle">
+    <span class="green-text text-darken-5"><b>Your comment was posted</b></span><br>
+    <span class="title"><b>{{comment.user.userprofile.name}}</b></span>
+    <p><span class="grey-text">{{comment.added|timesince}} ago</span>
+      <br>
+       {{comment.comment|linebreaks}}
+    </p>
+    
+    {% if user.is_authenticated and user == comment.user %}
+    <form hx-post="{{ comment.get_delete_url }}" method="post" class="secondary-content">
+        {% csrf_token %}
+        <div id="indicator" class="htmx-indicator preloader-wrapper small active">
+            <div class="spinner-layer spinner-green-only">
+                <div class="circle-clipper left">
+                <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-flat waves-effect waves-red transparent grey-text">
+            <i class="material-icons tiny grey-text">delete</i>
+        </button>
+    </form>
+  {% endif %}
+
+    
+  </li>

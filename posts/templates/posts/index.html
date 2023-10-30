@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Home{% endblock title %}
+
+{% block content %}
+
+<div class="row">
+    {% comment %}
+    <!-- Search autocomplete -->
+    <div class="col s12">
+        <div class="row">
+            <form action="{% url 'posts:search' %}">
+                <div class="input-field col s12">
+                    <i class="material-icons teal-text prefix">search</i>
+                    <input type="text" name="q" id="autocomplete-input" class="autocomplete">
+                    <label for="autocomplete-input">Search</label>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endcomment %}
+    <div class="row">
+        <div class="col s12">
+            <h3 class="purple-text text-darken-3">Latest Posts
+                <span><a href="{% url 'posts:create' %}" class="waves-effect waves-light btn-small teal">Add a post</a>
+      </span></h3>
+        </div>
+    </div>
+
+    <div id="post-add-form"></div>
+    
+    <div hx-get="/htmx_post_list"
+        hx-trigger="load delay:0.3s"
+        hx-swap="outerHTML"
+        >
+        <div class="htmx-indicator progress">
+            <div class="indeterminate"></div>
+        </div>
+        </div>
+    </div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="center">
+  <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="waves-effect"><a href="?page=1"><i class="material-icons">first_page</i></a></li>
+            <li class="waves-effect"><a href="?page={{ page_obj.previous_page_number }}"><i class="material-icons">chevron_left</i></a></li>
+            <li><a href="?page={{ page_obj.number|add:'-1' }}">{{ page_obj.number|add:'-1' }}</a></li>
+        {% endif %}
+            <li class="active"><a href="#">{{ page_obj.number }}</a></li>
+        {% if page_obj.has_next %}
+            <li><a href="?page={{ page_obj.number|add:'+1' }}">{{ page_obj.number|add:'+1' }}</a></li>
+            <li class="waves-effect"><a href="?page={{ page_obj.next_page_number }}"><i class="material-icons">chevron_right</i></a></li>
+            <li class="waves-effect"><a href="?page={{ page_obj.paginator.num_pages }}"><i class="material-icons">last_page</i></a></li>
+        {% endif %}
+  </ul>
+</div>
+{% endif %}
+
+    <div class="row">
+        <div id="popular-posts" class="col s12 l6">
+            {% include 'posts/_popular_posts.html' %}
+        </div>
+        <div id="recent-post" class="col s12 l6">
+            {% include 'posts/_recent_posts.html' %}
+        </div>
+    </div>
+    <!-- floating action buttons -->
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large purple darken-3">
+            <i class="large material-icons">add</i>
+        </a>
+        <ul>
+            <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
+            <li><a class="btn-floating green"><i class="material-icons">publish</i></a></li>
+            <li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>
+            <li><a href="{% url 'posts:create' %}" class="btn-floating modal-trigger red">
+                <i class="material-icons">add</i></a>
+            </li>
+        </ul>
+    </div>
+    <!--  End floating action buttons -->
+
+    {% endblock content %}

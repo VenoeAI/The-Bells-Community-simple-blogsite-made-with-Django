@@ -1,0 +1,15 @@
+{% load hitcount_tags %}
+        <h5 class="teal-text">Popular Posts</h5>
+        <div class="collection">
+          {% for post in popular_posts %}
+            <li class="collection-item avatar">
+              <img src="{{ post.image_thumbnail.url }}" class="circle">
+              <a href="{{ post.get_absolute_url }}">
+                <span class="title">{{ post.title|truncatechars:17 }}</span>
+              </a>
+              <p class="grey-text">{{ post.creator.userprofile.name }} <br>
+                <i class="far fa-eye"></i>&nbsp;&nbsp;{% get_hit_count for post %}
+              </p>
+            </li>
+          {% endfor %}
+        </div>
